@@ -33,7 +33,7 @@ namespace Marksman.Champions
             GameObject.OnCreate += OnCreateObject;
             GameObject.OnDelete += OnDeleteObject;
             AntiGapcloser.OnEnemyGapcloser += OnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += OnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
             Utils.Utils.PrintMessage("Draven loaded.");
         }
 
@@ -45,7 +45,7 @@ namespace Marksman.Champions
             }
         }
 
-        public void OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void Interrupter2_OnInterruptableTarget(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs args)
         {
             if (E.IsReady() && Config.Item("EInterruptable").GetValue<bool>() && unit.IsValidTarget(E.Range))
             {

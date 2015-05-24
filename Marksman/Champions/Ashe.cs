@@ -17,8 +17,7 @@ namespace Marksman.Champions
         public static Spell W;
         public static Spell E;
         public static Spell R;
-        public static Font vText;
-
+        
         public Ashe()
         {
             Q = new Spell(SpellSlot.Q);
@@ -30,21 +29,12 @@ namespace Marksman.Champions
             E.SetSkillshot(377f, 299f, 1400f, false, SkillshotType.SkillshotLine);
             R.SetSkillshot(250f, 130f, 1600f, false, SkillshotType.SkillshotLine);
 
-            Interrupter.OnPossibleToInterrupt += Game_OnPossibleToInterrupt;
+            
             Obj_AI_Base.OnProcessSpellCast += Game_OnProcessSpell;
+            Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
 
             Utility.HpBarDamageIndicator.DamageToUnit = GetComboDamage;
             Utility.HpBarDamageIndicator.Enabled = true;
-
-            vText = new Font(
-                Drawing.Direct3DDevice,
-                new FontDescription
-                {
-                    FaceName = "Courier new",
-                    Height = 15,
-                    OutputPrecision = FontPrecision.Default,
-                    Quality = FontQuality.Default
-                });
 
             Utils.Utils.PrintMessage("Ashe loaded.");
         }
@@ -59,7 +49,7 @@ namespace Marksman.Champions
             get { return ObjectManager.Player.HasBuff("FrostShot"); }
         }
 
-        public void Game_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void Interrupter2_OnInterruptableTarget(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs args)
         {
             if (R.IsReady() && Config.Item("RInterruptable" + Id).GetValue<bool>() && unit.IsValidTarget(1500))
             {
@@ -90,29 +80,6 @@ namespace Marksman.Champions
 
             return fComboDamage;
         }
-
-        private static void DrawHarassToggleStatus()
-        {
-            var xHarassStatus = "";
-            if (Program.Config.Item("UseWTH").GetValue<KeyBind>().Active)
-                xHarassStatus += "W - ";
-
-            if (xHarassStatus.Length < 1)
-            {
-                xHarassStatus = "";
-            }
-            else
-            {
-                xHarassStatus = "Toggle: " + xHarassStatus;
-            }
-
-            xHarassStatus = xHarassStatus.Substring(0, xHarassStatus.Length - 3);
-
-            Utils.Utils.DrawText(
-                vText, xHarassStatus, (int) ObjectManager.Player.HPBarPosition.X + 145,
-                (int) ObjectManager.Player.HPBarPosition.Y + 5, Color.White);
-        }
-
         public void Game_OnProcessSpell(Obj_AI_Base unit, GameObjectProcessSpellCastEventArgs spell)
         {
             if (!Config.Item("EFlash" + Id).GetValue<bool>() || unit.Team == ObjectManager.Player.Team)
@@ -256,7 +223,6 @@ namespace Marksman.Champions
             config.AddItem(
                 new MenuItem("DrawE" + Id, "E range").SetValue(new Circle(true,
                     System.Drawing.Color.FromArgb(100, 255, 0, 255))));
-            config.AddItem(new MenuItem("DrawHarassToggleStatus", "Draw Toggle Status").SetValue(true));
             return true;
         }
 
@@ -282,11 +248,6 @@ namespace Marksman.Champions
             {
                 Render.Circle.DrawCircle(ObjectManager.Player.Position, E.Range, drawE.Color);
             }
-
-            //if (Program.Config.Item("DrawHarassToggleStatus").GetValue<bool>())
-            // {
-            //     DrawHarassToggleStatus();
-            //  }
 
             var drawRMin = Program.Config.SubMenu("Combo").Item("DrawRMin").GetValue<Circle>();
             if (drawRMin.Active)

@@ -18,7 +18,6 @@ namespace Marksman.Champions
         public static Spell E;
         public static Spell W;
         public static Spell R;
-        public static Font vText;
 
         public Ezreal()
         {
@@ -35,16 +34,6 @@ namespace Marksman.Champions
 
             Utility.HpBarDamageIndicator.DamageToUnit = GetComboDamage;
             Utility.HpBarDamageIndicator.Enabled = true;
-
-            vText = new Font(
-                Drawing.Direct3DDevice,
-                new FontDescription
-                {
-                    FaceName = "Courier new",
-                    Height = 15,
-                    OutputPrecision = FontPrecision.Default,
-                    Quality = FontQuality.Default
-                });
 
             Utils.Utils.PrintMessage("Ezreal loaded.");
         }
@@ -104,16 +93,6 @@ namespace Marksman.Champions
             {
                 var maxRRange = Program.Config.SubMenu("Combo").Item("UseRCMaxRange").GetValue<Slider>().Value;
                 Render.Circle.DrawCircle(ObjectManager.Player.Position, maxRRange, drawRMax.Color, 2);
-            }
-            /*
-            if (Program.Config.Item("DrawHarassToggleStatus").GetValue<bool>())
-            {
-                DrawHarassToggleStatus();
-            }
-            */
-            if (Program.Config.Item("ShowKillableStatus").GetValue<bool>())
-            {
-                ShowKillableStatus();
             }
         }
 
@@ -298,44 +277,6 @@ namespace Marksman.Champions
             return true;
         }
 
-        /*
-        private static void DrawHarassToggleStatus()
-        {
-            var xHarassStatus = "";
-            if (Program.Config.Item("UseQTH").GetValue<KeyBind>().Active)
-                xHarassStatus += "Q - ";
-
-            if (Program.Config.Item("UseWTH").GetValue<KeyBind>().Active)
-                xHarassStatus += "W - ";
-
-            if (xHarassStatus.Length < 1)
-            {
-                xHarassStatus = "";
-            }
-            else
-            {
-                xHarassStatus = "Toggle: " + xHarassStatus;
-            }
-
-            xHarassStatus = xHarassStatus.Substring(0, xHarassStatus.Length - 3);
-
-            Utils.DrawText(
-                vText, xHarassStatus, (int) ObjectManager.Player.HPBarPosition.X + 145,
-                (int) ObjectManager.Player.HPBarPosition.Y + 5, SharpDX.Color.White);
-        }
-        */
-
-        private static void ShowKillableStatus()
-        {
-            var t = TargetSelector.GetTarget(2000, TargetSelector.DamageType.Physical);
-            if (t.IsValidTarget(2000) && t.Health < GetComboDamage(t))
-            {
-                const string xComboText = ">> Kill <<";
-                Utils.Utils.DrawText(
-                    vText, xComboText, (int) t.HPBarPosition.X + 145, (int) t.HPBarPosition.Y + 5, SharpDX.Color.White);
-            }
-        }
-
         public override bool DrawingMenu(Menu config)
         {
             config.AddItem(
@@ -344,8 +285,6 @@ namespace Marksman.Champions
             config.AddItem(
                 new MenuItem("DrawW" + Id, "W range").SetValue(
                     new Circle(false, Color.FromArgb(100, 255, 255, 255))));
-            config.AddItem(new MenuItem("ShowKillableStatus", "Show Killable Status").SetValue(true));
-
             var dmgAfterComboItem = new MenuItem("DamageAfterCombo", "Damage After Combo").SetValue(true);
 
             Config.AddItem(dmgAfterComboItem);

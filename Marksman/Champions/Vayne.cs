@@ -23,7 +23,7 @@ namespace Marksman.Champions
             E.SetTargetted(0.25f, 2200f);
 
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
 
             Utils.Utils.PrintMessage("Vayne loaded");
         }
@@ -34,7 +34,7 @@ namespace Marksman.Champions
                 E.CastOnUnit(gapcloser.Sender);
         }
 
-        public void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void Interrupter2_OnInterruptableTarget(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs args)
         {
             if (GetValue<bool>("UseEInterrupt") && unit.IsValidTarget(550f))
                 E.Cast(unit);

@@ -32,7 +32,7 @@ namespace Marksman.Champions
             Utility.HpBarDamageIndicator.Enabled = true;
 
             AntiGapcloser.OnEnemyGapcloser += AntiGapcloser_OnEnemyGapcloser;
-            Interrupter.OnPossibleToInterrupt += Interrupter_OnPossibleToInterrupt;
+            Interrupter2.OnInterruptableTarget += Interrupter2_OnInterruptableTarget;
 
             vText = new Font(
                 Drawing.Direct3DDevice,
@@ -53,7 +53,7 @@ namespace Marksman.Champions
                 R.CastOnUnit(gapcloser.Sender);
         }
 
-        public void Interrupter_OnPossibleToInterrupt(Obj_AI_Base unit, InterruptableSpell spell)
+        private void Interrupter2_OnInterruptableTarget(Obj_AI_Hero unit, Interrupter2.InterruptableTargetEventArgs args)
         {
             if (R.IsReady() && unit.IsValidTarget(R.Range) && GetValue<bool>("UseRMI"))
                 R.CastOnUnit(unit);
