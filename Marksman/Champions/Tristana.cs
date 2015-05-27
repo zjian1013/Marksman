@@ -162,7 +162,7 @@ namespace Marksman.Champions
             {
                 if (useR)
                 {
-                    var t = TristanaData.GetTarget(W.Range + R.Range - 30);
+                    var t = TristanaData.GetTarget(R.Range - 20);
 
                     if (!t.IsValidTarget())
                         return;
@@ -171,8 +171,6 @@ namespace Marksman.Champions
                         t.Health < Player.GetAutoAttackDamage(t, true))
                         return;
 
-                    if (t.IsValidTarget() && !t.IsValidTarget(R.Range) && W.IsReady())
-                        W.Cast(t);
                     R.CastOnUnit(t);
                 }
             }
