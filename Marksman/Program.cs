@@ -421,7 +421,7 @@ namespace Marksman
             if (botrk)
             {
                 if (target != null && target.Type == ObjectManager.Player.Type &&
-                    target.ServerPosition.Distance(ObjectManager.Player.ServerPosition) < 450)
+                    target.ServerPosition.Distance(ObjectManager.Player.ServerPosition) < 550)
                 {
                     var hasCutGlass = Items.HasItem(3144);
                     var hasBotrk = Items.HasItem(3153);
