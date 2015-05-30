@@ -383,7 +383,8 @@ namespace Marksman
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
-            CheckChampionBuff();
+            if (Items.HasItem(3139) || Items.HasItem(3140))
+                CheckChampionBuff();
 
             //Update the combo and harass values.
             CClass.ComboActive = CClass.Config.Item("Orbwalk").GetValue<KeyBind>().Active;
