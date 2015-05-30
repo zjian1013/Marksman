@@ -541,7 +541,8 @@ namespace Marksman
                     {
                         if (t1.Name.ToLower().Contains(t.Name.ToLower()))
                         {
-                            foreach (var bx in AActivator.BuffList.Where(bx => bx.BuffName == t1.Name))
+                            var t2 = t1;
+                            foreach (var bx in AActivator.BuffList.Where(bx => bx.BuffName == t2.Name))
                             {
                                 if (bx.Delay > 0)
                                 {
