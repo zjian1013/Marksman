@@ -40,6 +40,7 @@ namespace Marksman.Champions
 
         public override void Orbwalking_AfterAttack(AttackableUnit unit, AttackableUnit target)
         {
+            /*
             var t = target as Obj_AI_Hero;
             if (t != null && (ComboActive || HarassActive) && unit.IsMe)
             {
@@ -55,6 +56,7 @@ namespace Marksman.Champions
                     W.Cast(t);
                 }
             }
+            */
         }
 
         private static void CastQ()
