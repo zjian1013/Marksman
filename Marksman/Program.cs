@@ -333,6 +333,7 @@ namespace Marksman
 
         private static void Drawing_OnDraw(EventArgs args)
         {
+            /*
             var t = TargetSelector.SelectedTarget;
             if (!t.IsValidTarget())
             {
@@ -344,7 +345,7 @@ namespace Marksman
             {
                 Render.Circle.DrawCircle(t.Position, 150, Color.Yellow);
             }
-
+            */
             var drawJunglePosition = CClass.Config.SubMenu("Drawings").Item("drawJunglePosition").GetValue<bool>();
             {
                 if (drawJunglePosition)
