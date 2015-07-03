@@ -25,6 +25,15 @@ namespace Marksman
         public static double ActivatorTime;
         private static Obj_AI_Hero xSelectedTarget;
 
+        private static SpellSlot _smiteSlot = SpellSlot.Unknown;
+
+        private static Spell _smite;
+
+        private static readonly int[] SmitePurple = { 3713, 3726, 3725, 3726, 3723 };
+        private static readonly int[] SmiteGrey = { 3711, 3722, 3721, 3720, 3719 };
+        private static readonly int[] SmiteRed = { 3715, 3718, 3717, 3716, 3714 };
+        private static readonly int[] SmiteBlue = { 3706, 3710, 3709, 3708, 3707 };
+
         private static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -173,9 +182,15 @@ namespace Marksman
             // If Champion is supported draw the extra menus
             if (BaseType != CClass.GetType())
             {
+                SetSmiteSlot();
+                
+
                 var combo = new Menu("Combo", "Combo");
                 if (CClass.ComboMenu(combo))
                 {
+                    if (_smiteSlot != SpellSlot.Unknown)
+                        combo.AddItem(new MenuItem("ComboSmite", "Use Smite").SetValue(true));
+
                     Config.AddSubMenu(combo);
                 }
 
@@ -243,7 +258,7 @@ namespace Marksman
                 }
             }
 
-
+            
             CClass.MainMenu(Config);
             Config.AddToMainMenu();
             //Sprite.Load();
@@ -303,7 +318,6 @@ namespace Marksman
             {
                 xSelectedTarget = objAiHero;
                 TargetSelector.SetTarget(objAiHero);
-                Utils.Utils.PrintMessage(string.Format("{0} selected.", objAiHero.BaseSkinName));
             }
         }
 
@@ -384,6 +398,7 @@ namespace Marksman
 
         private static void Game_OnGameUpdate(EventArgs args)
         {
+
             if (Items.HasItem(3139) || Items.HasItem(3140))
                 CheckChampionBuff();
 
@@ -419,6 +434,12 @@ namespace Marksman
             var sword = Config.Item("SWORD").GetValue<bool>();
             var muramana = Config.Item("MURAMANA").GetValue<bool>();
             var target = CClass.Orbwalker.GetTarget() as Obj_AI_Base;
+            
+            var smiteReady = (_smiteSlot != SpellSlot.Unknown &&
+                              ObjectManager.Player.Spellbook.CanUseSpell(_smiteSlot) == SpellState.Ready);
+
+            if (smiteReady)
+                Smiteontarget(target as Obj_AI_Hero);
 
             if (botrk)
             {
@@ -591,6 +612,50 @@ namespace Marksman
                         if (Items.HasItem(3140)) Items.UseItem(3140);
                     }
                 }
+            }
+        }
+
+        private static string Smitetype
+        {
+            get
+            {
+                if (SmiteBlue.Any(i => Items.HasItem(i)))
+                    return "s5_summonersmiteplayerganker";
+
+                if (SmiteRed.Any(i => Items.HasItem(i)))
+                    return "s5_summonersmiteduel";
+                
+                if (SmiteGrey.Any(i => Items.HasItem(i)))
+                    return "s5_summonersmitequick";
+                
+                if (SmitePurple.Any(i => Items.HasItem(i)))
+                    return "itemsmiteaoe";
+                
+                return "summonersmite";
+            }
+        }
+
+
+        private static void SetSmiteSlot()
+        {
+            foreach (
+                var spell in
+                    ObjectManager.Player.Spellbook.Spells.Where(
+                        spell => String.Equals(spell.Name, Smitetype, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                _smiteSlot = spell.Slot;
+                _smite = new Spell(_smiteSlot, 700);
+            }
+        }
+        private static void Smiteontarget(Obj_AI_Hero t)
+        {
+            var useSmite = Config.Item("ComboSmite").GetValue<bool>();
+            var itemCheck = SmiteBlue.Any(i => Items.HasItem(i)) || SmiteRed.Any(i => Items.HasItem(i));
+            if (itemCheck && useSmite &&
+                ObjectManager.Player.Spellbook.CanUseSpell(_smiteSlot) == SpellState.Ready &&
+                t.Distance(ObjectManager.Player.Position) < _smite.Range)
+            {
+                ObjectManager.Player.Spellbook.CastSpell(_smiteSlot, t);
             }
         }
     }
