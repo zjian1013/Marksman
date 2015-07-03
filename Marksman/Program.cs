@@ -438,7 +438,7 @@ namespace Marksman
             var smiteReady = (SmiteSlot != SpellSlot.Unknown &&
                               ObjectManager.Player.Spellbook.CanUseSpell(SmiteSlot) == SpellState.Ready);
 
-            if (smiteReady)
+            if (smiteReady && CClass.Orbwalker.ActiveMode == Orbwalking.OrbwalkingMode.Combo)
                 Smiteontarget(target as Obj_AI_Hero);
 
             if (botrk)
